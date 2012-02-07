@@ -25,3 +25,8 @@ echo "Staging database is exported to $backupPath`date "+%y%m%d_%H%M"`_$stagingD
 echo "Drop all staging tables...";
 mysqldump -h$stagingHost -u$stagingUser -p$stagingPass --add-drop-table --no-data $stagingDB | grep ^DROP | mysql -h$stagingHost -u$stagingUser -p$stagingPass $stagingDB;
 echo "All staging tables dropped!";
+
+# Import live DB to staging DB.
+echo "Import live database into staging...";
+echo "Import sructure of cache tables...";
+mysqldump -h$liveHost -u$liveUser -p$livePass --no-data $liveDB `mysql -ND -h$liveHost -u$liveUser -p$livePass $liveDB -e "SHOW TABLES LIKE 'cache%'" | awk '{printf $1" "}'` | mysql -h$stagingHost -u$stagingUser -p$stagingPass $stagingDB;
