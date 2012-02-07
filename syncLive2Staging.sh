@@ -12,3 +12,6 @@ liveUser="";
 livePass="";
 liveDB="";
 liveHost="localhost";
+
+# Clear cache tables before backup.
+type drush &>/dev/null && (echo "Clear Drupal cache tables..."; drush cc all;)
