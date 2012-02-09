@@ -32,7 +32,7 @@ echo "Import sructure of cache and log tables...";
 mysqldump -h$liveHost -u$liveUser -p$livePass --no-data $liveDB watchdog `mysql -ND -h$liveHost -u$liveUser -p$livePass $liveDB -e "SHOW TABLES LIKE 'cache%'" | awk '{printf $1" "}'` | mysql -h$stagingHost -u$stagingUser -p$stagingPass $stagingDB;
 
 echo "Importing other tables data...";
-mysqldump -h$liveHost -u$liveUser -p$livePass $liveDB  --single-transaction -e `mysql -ND -h$liveHost -u$liveUser -p$livePass $liveDB -e "SHOW TABLES LIKE 'cache%'" | awk -v liveDB=${liveDB} '{printf "--ignore-table="liveDB"."$1" "}'` | mysql -h$stagingHost -u$stagingUser -p$stagingPass $stagingDB;
+mysqldump -h$liveHost -u$liveUser -p$livePass $liveDB  --single-transaction -e --ignore-table=$liveDB.watchdog `mysql -ND -h$liveHost -u$liveUser -p$livePass $liveDB -e "SHOW TABLES LIKE 'cache%'" | awk -v liveDB=${liveDB} '{printf "--ignore-table="liveDB"."$1" "}'` | mysql -h$stagingHost -u$stagingUser -p$stagingPass $stagingDB;
 echo "Import finished, staging site is synced with the live site!";
 
 exit 0;
